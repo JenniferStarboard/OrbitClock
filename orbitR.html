@@ -1,0 +1,171 @@
+<html>
+    <head>
+        <style>
+            .path {
+                display: block;
+                background-color: transparent;
+                
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 50%;
+                transform: translate(0, -50%);
+                
+                border-style: dashed;
+                border-width: 2px;
+                border-color: #555555;
+            }
+            
+            .path_holder {
+                display: block;
+                position: relative;
+                width: 1000px;
+                height: 1000px;
+                
+                border-style: solid;
+                border-width: 5px;
+                border-color: #000000;
+                border-radius:  5em;
+                
+            }
+            
+            .body {
+                position: absolute;
+            }
+            
+            .name {
+                background-color: #000000;
+                color: #FFFFFF;
+                padding: 0.5em;
+            }
+        </style>
+        <script>
+            
+            function switchTo(boo){//boo should be a boolean value
+                if (boo===false) {
+                    clearInterval(orbit);
+                } else if (boo===true) {
+                    clearInterval(orbit);
+                    orbit = setInterval(clock, 5);
+                }
+            }
+            
+            function clock(){
+                
+                let twoPie = 2*Math.PI;
+                
+                for(let i=0; i<celestial.hold.length; i++){
+                    let pointer = celestial.hold[i];
+                    
+                    let x = 495 + pointer.rad*(Math.sin(pointer.angle));
+                    let y = 490 + pointer.rad*(Math.cos(pointer.angle));
+                    
+                    
+                    
+                    pointer.angle = pointer.angle + pointer.velocity;
+                    
+                    //Keeping pointer angle between 0 and 2pi.
+                    if (pointer.angle<0) { //happens in retrograde motion
+                        pointer.angle = pointer.angle + twoPie;
+                    } else if (pointer.ange>twoPie) { 
+                        pointer.angle = pointer.angle - twoPie;
+                    }
+                    
+                    document.getElementById(pointer.ident).style.bottom = y + 'px';
+                    document.getElementById(pointer.ident).style.left = x + 'px';
+                                               
+                }
+            }
+            
+            function directionChange (bod){
+                bod.velocity = -1*bod.velocity;
+            }
+            
+            var celestial = {
+                hold: [],
+                radius: [450, 380, 250, 100, 50],
+                speed: [0.0005, 0.001, 0.005, 0.01, 0.05]
+            };
+            
+            
+            //create objects for celestial array
+            for(let i=0; i<celestial.radius.length; i++){
+                let bod = {};
+                let n = i + 1;
+                let pnt = 'body' + n;
+                
+                bod.ident = pnt;
+                bod.rad =celestial.radius[i];
+                bod.velocity = celestial.speed[i];
+                bod.angle = 0;
+                
+                celestial.hold.push(bod);
+            }
+            
+            var orbit = setInterval(clock, 5);
+            
+            
+        </script>
+        
+    </head>
+    <body>
+        <h1>Orbit Path Directions</h1>
+        <div class="path_holder">
+            <div class="body" id="body1">&#x25FC</div>
+            <div class="body" id="body2">&#x25FC</div>
+            <div class="body" id="body3">&#x25FC</div>
+            <div class="body" id="body4">&#x25FC</div>
+            <div class="body" id="body5">&#x25FC</div>
+            <div class="path" id="path5" style="width: 900px; height: 900px; border-radius: 450px;">
+                <div class="path" id="path4" style="width: 760px; height: 760px; border-radius: 380px;">
+                    <div class="path" id="path3" style="width: 500px; height: 500px; border-radius: 250px;">
+                        <div class="path" id="path2" style="width: 200px; height: 200px; border-radius: 100px;">
+                            <div class="path" id="path1" style="width: 100px; height: 100px; border-radius: 50px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div>
+            <p>
+                <input type="button" value="Stop" onclick="switchTo(false)">
+                <input type="button" value="Start" onclick="switchTo(true)">
+            </p>
+            <p>
+                <span class="name">First</span>
+                <select onchange="directionChange(celestial.hold[0])">
+                    <option>Standard</option>
+                    <option>Retrograde</option>
+                </select>
+            </p>
+            <p>
+                <span class="name">Second</span>
+                <select onchange="directionChange(celestial.hold[1])">
+                    <option>Standard</option>
+                    <option>Retrograde</option>
+                </select>
+            </p>
+            <p>
+                <span class="name">Third</span>
+                <select onchange="directionChange(celestial.hold[2])">
+                    <option>Standard</option>
+                    <option>Retrograde</option>
+                </select>
+            </p>
+            <p>
+                <span class="name">Fourth</span>
+                <select onchange="directionChange(celestial.hold[3])">
+                    <option>Standard</option>
+                    <option>Retrograde</option>
+                </select>
+            </p>
+            <p>
+                <span class="name">Last</span>
+                <select onchange="directionChange(celestial.hold[4])">
+                    <option>Standard</option>
+                    <option>Retrograde</option>
+                </select>
+            </p>
+        </div>
+    </body>
+</html>
